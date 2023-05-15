@@ -1,0 +1,20 @@
+version: '3'
+
+services:
+###> doctrine/doctrine-bundle ###
+  db:
+    ports:
+      - "3306"
+###< doctrine/doctrine-bundle ###
+
+###> symfony/mailer ###
+  mailcatcher:
+    image: schickling/mailcatcher
+    # ports: ["1025", "1080"]
+    ports:
+        - 1025:1025
+        - 1080:1080
+    container_name: mailcatcher
+    networks:
+      - app-network
+###< symfony/mailer ###
