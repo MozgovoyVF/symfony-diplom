@@ -6,16 +6,29 @@
 /config/secrets/prod/prod.decrypt.private.php
 /public/bundles/
 /var/
-/vendor/
 .DS_Store
 .composer
 .bash_history
 .env
+.node-gyp
 composer.lock
 docker/mysql/data/
 .viminfo
+.npm
+/node_modules/
+.config
+.cache
+.yarn
+/vendor/
 ###< symfony/framework-bundle ###
 
 ###> liip/imagine-bundle ###
 /public/media/cache/
 ###< liip/imagine-bundle ###
+
+###> symfony/webpack-encore-bundle ###
+/node_modules/
+/public/build/
+npm-debug.log
+yarn-error.log
+###< symfony/webpack-encore-bundle ###
