@@ -1,0 +1,27 @@
+{
+    "title": "Skillbox Symfony - diploma layout",
+    "name": "skillbox-symfony-diploma-layout",
+    "version": "1.0.0",
+    "scripts": {
+        "dev-server": "encore dev-server",
+        "dev": "encore dev",
+        "watch": "encore dev --watch",
+        "build": "encore production --progress"
+    },
+    "description": "Верстка дипломного проекта по курсу фреймворка Symfony на Skillbox, сделанный с помощью Bootstrap",
+    "license": "MIT",
+    "dependencies": {
+        "@popperjs/core": "^2.11.7",
+        "jquery": "^3.7.0",
+        "popper.js": "^1.16.1"
+    },
+    "devDependencies": {
+        "@symfony/webpack-encore": "^0.28.2",
+        "bootstrap": "^5.2.3",
+        "core-js": "^3.0.0",
+        "node-sass": "^4.14.1",
+        "regenerator-runtime": "^0.13.2",
+        "sass-loader": "^7.3.1",
+        "webpack-notifier": "^1.6.0"
+    }
+}
