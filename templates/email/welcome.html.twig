@@ -1,0 +1,34 @@
+{% extends 'email/emailBase.html.twig' %}
+
+{% block content %}
+<p>Наконец-таки ты с нами, дорогой <b>{{ email.toName }}</b>.</p>
+<table role="presentation" border="0" cellpadding="0" cellspacing="0" class="btn btn-primary">
+    <tbody>
+    <tr>
+        <td align="right" class="image-column">
+            {# <img src="{{ email.image('@images/article-1.jpeg') }}" width="80" height="80"> #}
+        </td>
+        <td align="left">
+            <p>
+                Теперь ты точно поймешь, как проиграммировать, что программировать и зачем программировать!
+            </p>
+        </td>
+    </tr>
+    </tbody>
+</table>
+<table role="presentation" border="0" cellpadding="0" cellspacing="0" class="btn btn-primary">
+    <tbody>
+    <tr>
+        <td align="left">
+            <table role="presentation" border="0" cellpadding="0" cellspacing="0">
+                <tbody>
+                <tr>
+                    <td> <a href="{{ url('app_homepage') }}" target="_blank">Скорее на сайт</a> </td>
+                </tr>
+                </tbody>
+            </table>
+        </td>
+    </tr>
+    </tbody>
+</table>
+{% endblock %}

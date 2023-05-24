@@ -46,11 +46,11 @@ body.signin-body {
         border-radius: 2rem;
     }
 
-    &>input,
-    &>label {
+    & input,
+    & label {
         padding: var(--input-padding-y) var(--input-padding-x);
     }
-    &>label {
+    & label {
         position: absolute;
         top: 0;
         left: 0;
