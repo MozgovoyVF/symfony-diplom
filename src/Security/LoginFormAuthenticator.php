@@ -87,6 +87,10 @@ class LoginFormAuthenticator extends AbstractAuthenticator
             throw new CustomUserMessageAuthenticationException('Неверный логин или пароль');
         }
 
+        if (!$user->isIsVerified()) {
+            throw new CustomUserMessageAuthenticationException('Данный пользователь не аутентифицирован');
+        }
+
         return new SelfValidatingPassport(new UserBadge($credentials['email']));
     }
 
@@ -99,8 +103,11 @@ class LoginFormAuthenticator extends AbstractAuthenticator
     public function onAuthenticationFailure(Request $request, AuthenticationException $exception): ?Response
     {
         $request->getSession()->set(Security::AUTHENTICATION_ERROR, $exception);
+        $remember = $request->request->get('_remember_me');
         return new RedirectResponse(
-            $this->router->generate('app_login')
+            $this->router->generate('app_login', [
+                'remember' => $remember,
+            ])
         );
     }
 }

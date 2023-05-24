@@ -11,7 +11,7 @@ use Symfony\Component\Validator\Constraints\NotBlank;
 class UserRegistrationFormModel
 {
     #[NotBlank(message:'Поле не должно быть пустым')]
-    #[Email()]
+    #[Email(message:'Некорректно введенный email')]
     #[UniqueUser()]
     public $email;
     
