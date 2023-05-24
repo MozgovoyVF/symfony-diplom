@@ -19,12 +19,22 @@ class Mailer
     {
         $this->mailer = $mailer;
     }
-    
-    public function sendWelcomeMail(User $user)
+
+    public function sendWelcomeMail(User $user, $signatureComponents)
     {
-        $this->send('email/welcome.html.twig', 'Добро пожаловать на BlaBlaArticle', $user);
+        $this->send(
+            'email/welcome.html.twig',
+            'Добро пожаловать на BlaBlaArticle',
+            $user,
+            function (TemplatedEmail $email) use ($signatureComponents) {
+                $email
+                    ->context([
+                        'url' => $signatureComponents->getSignedUrl(),
+                    ]);
+            }
+        );
     }
-    
+
     public function sendWeeklyNewsletter(User $user, array $articles)
     {
         $this->send(
@@ -35,21 +45,19 @@ class Mailer
                 $email
                     ->context([
                         'articles' => $articles,
-                    ])
-                ;
+                    ]);
             }
         );
     }
-    
+
     private function send(string $template, string $subject, User $user, Closure $callback = null)
     {
         $email = (new TemplatedEmail())
-            ->from(new Address('noreply@symfony.skillbox', 'BlaBlaArticle'))
+            ->from(new Address('blablaarticle@symfony.ru', 'BlaBlaArticle'))
             ->to(new Address($user->getEmail(), $user->getFirstName()))
             ->htmlTemplate($template)
-            ->subject($subject)
-        ;
-        
+            ->subject($subject);
+
         if ($callback) {
             $callback($email);
         }

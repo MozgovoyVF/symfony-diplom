@@ -7,9 +7,15 @@
         <div class="card card-signin my-5">
           <div class="card-body">
             <h5 class="card-title text-center text-primary">Регистрация</h5>
-            <div class="alert alert-success" role="alert">
-              Для завершения регистрации подтвердите ваш email
-            </div>
+            
+            {% for flash in app.flashes('success') %}
+            <div class="alert alert-success">{{ flash }}</div>
+            {% endfor %}
+
+            {% for flash in app.flashes('error') %}
+            <div class="alert alert-danger">{{ flash }}</div>
+            {% endfor %}
+            
             {{ form_start(registrationForm, { attr: {class: 'form-signin'} }) }}
 
             <div class="form-label-group">
