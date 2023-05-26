@@ -18,20 +18,7 @@
         {% endblock %}
     </head>
     <body>
-        <nav class="navbar navbar-light bg-light static-top">
-            <div class="container">
-            <span class="navbar-brand">BlaBlaArticle</span>
-            <a class="js-scroll-trigger" href="#services">Сервисы</a>
-            <a class="js-scroll-trigger" href="#author">Автор</a>
-            
-            {% if is_granted('IS_AUTHENTICATED_REMEMBERED') %}
-                <a class="btn btn-primary" href="{{ path('app_logout') }}">Выйти</a>
-            {% else %}
-                <a class="btn btn-primary" href="{{ path('app_login') }}">Войти</a>
-            {% endif %}
-            
-            </div>
-        </nav>
+        {% block nav %}{% endblock %}
         <header class="masthead text-white text-center">
             <div class="overlay"></div>
             {% block overlay %}{% endblock %}
