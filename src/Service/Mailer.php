@@ -23,7 +23,7 @@ class Mailer
     public function sendWelcomeMail(User $user, $signatureComponents)
     {
         $this->send(
-            'email/welcome.html.twig',
+            'templates/email/welcome.html.twig',
             'Добро пожаловать на BlaBlaArticle',
             $user,
             function (TemplatedEmail $email) use ($signatureComponents) {

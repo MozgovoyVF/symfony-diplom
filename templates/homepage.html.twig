@@ -1,4 +1,4 @@
-{% extends "base.html.twig" %}
+{% extends "templates/base.html.twig" %}
 {% block title %}BlaBlaArticle{% endblock %}
 {% block nav %}
   <nav class="navbar navbar-light bg-light static-top">
@@ -17,7 +17,9 @@
   </nav>
 {% endblock %}
 {% block overlay %}
-  <div class="container">
+<header class="masthead text-white text-center">
+  <div class="overlay">
+    <div class="container">
     <div class="row">
         <div class="col-xl-9 mx-auto">
             <h1 class="mb-5">Создай уникальную статью идеально подходящую для вашего бизнеса, сайта или проекта!</h1>
@@ -31,6 +33,8 @@
         </div>
     </div>
   </div>
+  </div> 
+</header>
 {% endblock %}
 {% block body %}
   <section class="features-icons bg-light text-center" id="services">

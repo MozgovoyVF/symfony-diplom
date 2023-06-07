@@ -2,7 +2,7 @@
 
 namespace App\Controller;
 
-use App\Provider\ArticleContentProvider;
+use App\Provider\ArticleContentTryProvider;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
@@ -14,7 +14,7 @@ class IndexController extends AbstractController
   {
 
     return $this->render(
-      'homepage.html.twig',
+      'templates/homepage.html.twig',
       [
 
       ]
@@ -22,7 +22,7 @@ class IndexController extends AbstractController
   }
 
   #[Route('/try', name: 'app_try')]
-  public function try(Request $request, ArticleContentProvider $articleProvider)
+  public function try(Request $request, ArticleContentTryProvider $articleProvider)
   {
     $session = $request->getSession();
     $disabled = false;
@@ -59,7 +59,7 @@ class IndexController extends AbstractController
     $content = $articleProvider->get($text, $word);
 
     return $this->render(
-      'try.html.twig',
+      'tempaltes/try.html.twig',
       [
         'disabled' => $disabled,
         'title' => $title,

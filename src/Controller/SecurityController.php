@@ -12,6 +12,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 use SymfonyCasts\Bundle\VerifyEmail\VerifyEmailHelperInterface;
 use SymfonyCasts\Bundle\VerifyEmail\Exception\VerifyEmailExceptionInterface;
@@ -21,11 +22,15 @@ class SecurityController extends AbstractController
     #[Route(path: '/login', name: 'app_login')]
     public function login(AuthenticationUtils $authenticationUtils, Request $request): Response
     {
+        if ($this->isGranted('IS_AUTHENTICATED_REMEMBERED')) {
+            return $this->redirectToRoute('app_account');
+        }
+
         $error = $authenticationUtils->getLastAuthenticationError();
 
         $lastUsername = $authenticationUtils->getLastUsername();
         $remember = $request->query->get('remember');
-        return $this->render('security/login.html.twig', ['last_username' => $lastUsername, 'error' => $error, 'remember' => $remember]);
+        return $this->render('templates/security/login.html.twig', ['last_username' => $lastUsername, 'error' => $error, 'remember' => $remember]);
     }
 
     #[Route(path: '/logout', name: 'app_logout')]
@@ -37,6 +42,10 @@ class SecurityController extends AbstractController
     #[Route(path: '/register', name: 'app_register')]
     public function register(Request $request, Mailer $mailer, VerifyEmailHelperInterface $verifyEmailHelper, UserService $userService)
     {
+        if ($this->isGranted('IS_AUTHENTICATED_REMEMBERED')) {
+            return $this->redirectToRoute('app_account');
+        }
+
         $form = $this->createForm(UserRegistrationFormType::class);
         
         $form->handleRequest($request);
@@ -54,7 +63,8 @@ class SecurityController extends AbstractController
                 ->setPassword($userService->passwordEncoder->hashPassword(
                     $user,
                     $userModel->plainPassword
-                ));
+                ))
+                ->setSubscriptionDate(new \DateTime());
             ;
 
             $userService->em->persist($user);
@@ -71,12 +81,12 @@ class SecurityController extends AbstractController
 
             $this->addFlash('success', 'Для завершения регистрации подтвердите Ваш адрес электронной почты');
 
-            return $this->render('security/register.html.twig', [
+            return $this->render('templates/security/register.html.twig', [
                 'registrationForm' => $form->createView(), 
             ]);
         }
 
-        return $this->render('security/register.html.twig', [
+        return $this->render('templates/security/register.html.twig', [
             'registrationForm' => $form->createView(), 
         ]);
     }
@@ -107,6 +117,6 @@ class SecurityController extends AbstractController
 
         $userService->authenticate($request, $user);
 
-        return $this->render('homepage.html.twig');
+        return $this->render('templates/homepage.html.twig');
     }
 }

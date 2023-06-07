@@ -1,4 +1,4 @@
-{% extends "base.html.twig" %}
+{% extends "templates/base.html.twig" %}
 {% block title %}BlaBlaArticle{% endblock %}
 {% block nav %}
   <nav class="navbar navbar-light bg-light static-top">
@@ -13,7 +13,6 @@
   </nav>
 {% endblock %}
 {% block overlay %}
-
   <header class="masthead text-white text-center">
     <div class="overlay"></div>
     <div class="container">
@@ -43,7 +42,7 @@
             <div class="form-label-group">
               <input type="text" id="articleTitle" {% if disabled %} disabled {% endif %}
                name="title" class="form-control" placeholder="Заголовок статьи" required
-              value="{% if title %} {{title}} {% else  %}} Тестовая статья {% endif %}" autofocus> 
+              value="{% if title %} {{title}} {% else  %}Тестовая статья{% endif %}" autofocus> 
               <label for="articleTitle">Заголовок статьи</label>
             </div>
             <div class="form-label-group">
@@ -118,7 +117,7 @@
         <div class="col-md-10 col-lg-8 col-xl-7 mx-auto">
           <div class="form-row">
             <div class="col-12 col-md-6 mx-auto">
-              <a href="register.html" class="btn btn-block btn-lg btn-primary">Регистрация</a>
+              <a href="{{ path('app_register') }}" class="btn btn-block btn-lg btn-primary">Регистрация</a>
             </div>
           </div>
         </div>

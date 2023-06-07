@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>
+            {% block title %}
+                BlaBlaArticle - Лучший генератор статей
+            {% endblock %}
+        </title>
+
+        {% block stylesheets %}
+            <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,700,300italic,400italic,700italic" rel="stylesheet" type="text/css">
+            {{ encore_entry_link_tags('app') }}
+        {% endblock %}
+
+        {% block javascripts %}
+            {{ encore_entry_script_tags('app') }}
+        {% endblock %}
+    </head>
+    <body>
+        {% block sidebar %}
+        <div class="d-flex" id="wrapper">
+        <div class="bg-light border-right" id="sidebar-wrapper">
+            <div class="sidebar-heading">BlaBlaArticle</div>
+            <div class="list-group list-group-flush">
+            <a href="{{ path('app_account') }}"  class="list-group-item list-group-item-action bg-light">Рабочий стол</a>
+            <a href="{{ path('app_article_create') }}" class="list-group-item list-group-item-action active">Создать статью</a>
+            <a href="dashboard_history.html"        class="list-group-item list-group-item-action bg-light">История статей</a>
+            <a href="dashboard_subscription.html"   class="list-group-item list-group-item-action bg-light">Подписка</a>
+            <a href="dashboard_profile.html"        class="list-group-item list-group-item-action bg-light">Профиль</a>
+            <a href="dashboard_modules.html"        class="list-group-item list-group-item-action bg-light">Модули генератора</a>
+            </div>
+        </div>
+        {% endblock %}
+
+        {% block nav %}
+        <div id="page-content-wrapper">
+        <nav class="navbar navbar-expand-lg navbar-light bg-light border-bottom">
+        <button class="btn btn-primary" id="menu-toggle">Скрыть меню</button>
+
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Показать/Скрыть навигацию">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav ml-auto mt-2 mt-lg-0">
+            <li class="nav-item active">
+                <a class="nav-link" href="{{ path('app_logout') }}">Выйти</a>
+            </li>
+            </ul>
+        </div>
+        </nav>
+        {% endblock %}
+        {% block overlay %}{% endblock %}
+        {% block body %}{% endblock %}
+    </body>
+</html>
