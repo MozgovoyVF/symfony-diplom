@@ -2,69 +2,47 @@
 
 namespace App\Controller;
 
-use App\Entity\Article;
-use App\Repository\ArticleRepository;
+use App\Service\ArticleContentService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
-use App\Entity\User;
-use App\Provider\ArticleContentProvider;
-use App\Repository\ThemeRepository;
-use Doctrine\ORM\EntityManagerInterface;
-use Exception;
+use App\Service\ThemeService;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 
 #[IsGranted("IS_AUTHENTICATED_FULLY")]
 class ArticleController extends AbstractController
 {
-  #[Route('/create_content', name: 'app_article_create_content')]
-  public function createContent(Request $request, ArticleRepository $articleRepository , ArticleContentProvider $articleContentProvider, EntityManagerInterface $em, SessionInterface $session)
+  /**
+   * Преобразует ввод, заданный в качестве первого аргумента.
+   *
+   * @param ArticleContentService $articleContentService
+   * @param Request $request
+   * @param SessionInterface $session
+   */
+  #[Route('/create_content', name: 'app_article_create_content', methods: ['POST'])]
+  public function createContent(ArticleContentService $articleContentService, Request $request, SessionInterface $session): RedirectResponse
   {
-    $error = '';
-    $content = '';
+    $params = $articleContentService->createContent($request);
 
-    /** @var User $user */
-    $user = $this->getUser();
-    $limit = $articleRepository->findLatestHourPublished($user->getId());
-    $disabled = false;
-
-    if (count($limit) >= 2 and $user->getSubscription() !== 'pro') {
-      $disabled = true;
-    } 
-
-    if (!$disabled && $request->isMethod('post')) {
-      $data = $request->request->all();
-      try {
-        $data = $articleContentProvider->get($data, $_FILES);
-        $content = $data['content'];
-
-        /** @var Article $article */
-        $article = (new Article())
-          ->setTitle($data['title'])
-          ->setDescription($data['description'])
-          ->setContent($data['content'])
-          ->setAuthor($user);
-
-        $em->persist($article);
-        $em->flush($article);
-
-      } catch (Exception $e) {
-        $error = $e->getMessage();
-      }
-    }
-    $session->set('disabled', $disabled);
-    $session->set('content', $content);
-    $session->set('error', $error);
+    $session->set('disabled', $params['disabled']);
+    $session->set('content', $params['content']);
+    $session->set('error', $params['error']);
 
     return $this->redirectToRoute('app_article_create');
-    
   }
 
+  /**
+   * Отображение страницы создания контента статьи.
+   * @param ThemeService $themeService
+   * @param SessionInterface $session
+   */
   #[Route('/create', name: 'app_article_create')]
-  public function create(ThemeRepository $themeRepository, SessionInterface $session)
+  public function create(ThemeService $themeService, SessionInterface $session): Response
   {
-    $themes = $themeRepository->findAll();
+    $themes = $themeService->getAll();
 
     $disabled = $session->get('disabled', false);
     $content = $session->get('content', '');
@@ -83,6 +61,5 @@ class ArticleController extends AbstractController
         'themes' => $themes
       ]
     );
-
   }
 }

@@ -11,6 +11,10 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class UserRegistrationFormType extends AbstractType
 {
+    /** 
+     * @param FormBuilderInterface $builder 
+     * @param Array $builder 
+     */
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
@@ -21,8 +25,7 @@ class UserRegistrationFormType extends AbstractType
                 'invalid_message' => 'Введенные пароли не совпадают',
                 'options' => ['attr' => ['class' => 'form-control']],
                 'required' => true,
-            ])
-        ;
+            ]);
     }
 
     public function configureOptions(OptionsResolver $resolver): void

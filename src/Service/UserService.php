@@ -6,15 +6,31 @@ use App\Entity\User;
 use App\Security\LoginFormAuthenticator;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Security\Http\Authentication\UserAuthenticatorInterface;
 
 class UserService
 {
+  /**
+   * @var UserPasswordHasherInterface
+   */
   public $passwordEncoder;
+  /**
+   * @var UserAuthenticatorInterface
+   */
   public $authenticator;
+  /**
+   * @var LoginFormAuthenticator
+   */
   public $formAuthenticator;
+  /**
+   * @var EntityManagerInterface
+   */
   public $em;
+  /**
+   * @var User
+   */
   public $user;
 
   /**
@@ -38,7 +54,7 @@ class UserService
   /**
    * @param Request $request
    */
-  public function create(Request $request)
+  public function create(Request $request): self
   {
     $this->user = new User();
     $this->user
@@ -55,7 +71,7 @@ class UserService
   /**
    * @param Request $request
    */
-  public function authenticate(Request $request, $user = null)
+  public function authenticate(Request $request, $user = null): Response
   {
     $user = $user ? $user : $this->user;
 

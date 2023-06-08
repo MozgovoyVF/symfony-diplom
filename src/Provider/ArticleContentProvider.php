@@ -24,11 +24,13 @@ class ArticleContentProvider
     $this->themeRepository = $themeRepository;
   }
 
-  public function get($data, $files)
+  /** Создание статьи по заданным параметрам */
+  public function get($data, $files): array
   {
     $themeEntity = $this->themeRepository->findOneBy(['code' => $data['theme']]);
     $themeClass = '\\App\\Service\\Themes\\' . ucfirst($themeEntity->getName());
     $theme = new $themeClass();
+    /** @var ImageLoader $imageLoader */
     $imageLoader = new ImageLoader($data['theme']);
 
     //Производим загрузку картинок либо выдаем предупреждение
@@ -41,13 +43,8 @@ class ArticleContentProvider
     } else {
       $images = $theme->images;
     }
-    
 
-    if ($data['title'] == '') {
-      $title = $theme->title;
-    } else {
-      $title = $data['title'];
-    }
+    $title = ($data['title'] == '') ? $theme->title : $data['title'];
 
     //При отсутствии ключевого слова - выбираем его из указанной темы
     if (count($data['keywords']) === 0) {
@@ -81,13 +78,8 @@ class ArticleContentProvider
     }
 
     // Определяем количество модулей из параметров пользователя
-    if ($data['size'][1] != '') {
-      $count = (int) rand($data['size'][0], $data['size'][1]);
-    } else {
-      $count = (int) $data['size'][0];
-    }
-
-    if ($count == 0) $count = 1;
+    $count = ($data['size'][1] != '') ? (int) rand($data['size'][0], $data['size'][1]) : (int) $data['size'][0];
+    $count = ($count == 0) ?? 1;
 
     //Создаем контент
     $content = implode(PHP_EOL . PHP_EOL, $this->createContent($title, $theme->paragraphs, $keywords, $count, $images, $words, $wordsCount));
@@ -99,7 +91,8 @@ class ArticleContentProvider
     ];
   }
 
-  private function createContent($title, $paragraphs, $keywords, $count, $images, $words, $wordsCount)
+  /** Создание контента статьи по заданным параметрам */
+  private function createContent($title, $paragraphs, $keywords, $count, $images, $words, $wordsCount): array
   {
     $modules = scandir($_SERVER['DOCUMENT_ROOT'] . '/build/modules/');
     $addWords = array_fill(0, count($words), []);
@@ -153,6 +146,7 @@ class ArticleContentProvider
     return $content;
   }
 
+  /** Создание одного параграфа */
   private function createParagraph($paragraphs, $keywords, $wordsInModule, $wordsCountInModule)
   {
     $text = $this->templating->render($paragraphs[array_rand($paragraphs, 1)], [
@@ -166,9 +160,9 @@ class ArticleContentProvider
     return implode(' ', $resultArray);
   }
 
-  private function createParagraphs($paragraphs, $keywords, $wordsInModule, $wordsCountInModule)
+  /** Создание от 1 до 3 параграфов */
+  private function createParagraphs($paragraphs, $keywords, $wordsInModule, $wordsCountInModule): string
   {
-
     $count = rand(1, 3);
     $result = [];
 
@@ -207,27 +201,27 @@ class ArticleContentProvider
     return implode(PHP_EOL . PHP_EOL, $result);
   }
 
-  private function createTitle($title)
+  /** Создание заголовка статьи */
+  private function createTitle($title): string
   {
     return $this->templating->render('/public/build/modules/title/title.html.twig', [
       'title' => $title,
     ]);
   }
 
-  private function insertKeywords($arr, $wordsCountInModule, $wordsInModule,  $keywords)
+  /** Вставка ключевых слов в массив контента */
+  private function insertKeywords($arr, $wordsCountInModule, $wordsInModule,  $keywords): array
   {
     for ($j = 0; $j < count($wordsCountInModule); $j++) {
 
       for ($k = 0; $k < $wordsCountInModule[$j]; $k++) {
         $randKey = array_rand($arr, 1);
-
         for ($i = 0; $i < count($keywords); $i++) {
           if (stripos($arr[$randKey], $keywords[$i]) || ($randKey == 0) || ($randKey == count($arr) - 1)) {
             $i = 0;
             $randKey = array_rand($arr, 1);
           }
         }
-
         $arr = array_slice($arr, 0, $randKey, true) + ["$randKey" =>  $wordsInModule[$j] . ' ' . $arr[$randKey]] +  array_slice($arr, $randKey, count($arr) - 1, true);
       }
     }

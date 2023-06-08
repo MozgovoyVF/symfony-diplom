@@ -20,7 +20,7 @@ class Mailer
         $this->mailer = $mailer;
     }
 
-    public function sendWelcomeMail(User $user, $signatureComponents)
+    public function sendWelcomeMail(User $user, $signatureComponents): void
     {
         $this->send(
             'templates/email/welcome.html.twig',
@@ -35,7 +35,7 @@ class Mailer
         );
     }
 
-    public function sendWeeklyNewsletter(User $user, array $articles)
+    public function sendWeeklyNewsletter(User $user, array $articles): void
     {
         $this->send(
             'email/newsletter.html.twig',
@@ -50,7 +50,7 @@ class Mailer
         );
     }
 
-    private function send(string $template, string $subject, User $user, Closure $callback = null)
+    private function send(string $template, string $subject, User $user, Closure $callback = null): void
     {
         $email = (new TemplatedEmail())
             ->from(new Address('blablaarticle@symfony.ru', 'BlaBlaArticle'))

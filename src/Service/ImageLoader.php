@@ -19,7 +19,7 @@ class ImageLoader
     $this->theme = $theme;
   } 
 
-  public function load ($files)
+  public function load ($files): array
   {
     $uploaddir = $_SERVER['DOCUMENT_ROOT'] . '/build/images/themes/' . $this->theme . '/';
     $images = $files['images'];
@@ -50,17 +50,17 @@ class ImageLoader
   }
 
   // Helper functions
-private function moveFile($from, $to)
+private function moveFile($from, $to): bool
   {
     return move_uploaded_file($from, $to);
   }
 
-private function removeFile($name)
+private function removeFile($name): bool
   {
-    unlink($name);
+    return unlink($name);
   }
 
-private function validateFile($type, $fileSize, $size, $typeList)
+private function validateFile($type, $fileSize, $size, $typeList): bool
   {
     if (!$this->validateFileSize($fileSize, $size)) {
       return false;
@@ -69,17 +69,17 @@ private function validateFile($type, $fileSize, $size, $typeList)
     return $this->validateFileType($type, $typeList);
   }
 
-private function validateFileSize($fileSize, $maxSizeLimit)
+private function validateFileSize($fileSize, $maxSizeLimit): bool
   {
       return $fileSize <= $maxSizeLimit;
   }
 
-private function validateFileType($type, $types)
+private function validateFileType($type, $types): bool
   {
     return in_array(
       $type,
       $types,
-      true // Strict
+      true
     );
   }
 

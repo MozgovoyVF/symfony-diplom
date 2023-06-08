@@ -5,7 +5,8 @@ namespace App\Provider;
 class ArticleContentTryProvider 
 {
 
-  public function get(string $content, string $word)
+  /** Создание контента статьи по заданным параметрам */
+  public function get(string $content, string $word): string
   {
     if (!$word) return $content;
   

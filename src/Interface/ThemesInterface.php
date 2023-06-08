@@ -9,5 +9,4 @@ class ThemesInterface
   public array $paragraphs;
   public array $images;
   
-
 }
