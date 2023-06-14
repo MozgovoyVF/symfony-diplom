@@ -10,31 +10,33 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class IndexController extends AbstractController
 {
-  /** Отображение главной страницы сайта */
-  #[Route('/', name: 'app_homepage')]
-  public function homepage(): Response
-  {
-    return $this->render('templates/homepage.html.twig');
-  }
+    /**
+     * @return Response
+     */
+    #[Route('/', name: 'app_homepage')]
+    public function homepage(): Response
+    {
+        return $this->render('templates/homepage.html.twig');
+    }
 
-  /** Отображение страницы пробного создания статьи *
-   *
-   * @param Request $request
-   * @param ArticleContentService $articleContent
-   */
-  #[Route('/try', name: 'app_try')]
-  public function try(Request $request, ArticleContentService $articleContent): Response
-  {
-    $params = $articleContent->createTrialContent($request);
+    /** 
+     * @param Request $request
+     * @param ArticleContentService $articleContent
+     * @return Response
+     */
+    #[Route('/try', name: 'app_try')]
+    public function try(Request $request, ArticleContentService $articleContent): Response
+    {
+        $params = $articleContent->createTrialContent($request->request->all());
 
-    return $this->render(
-      'tempaltes/try.html.twig',
-      [
-        'disabled' => $params['disabled'],
-        'title' => $params['title'],
-        'word' => $params['word'],
-        'content' => $params['content']
-      ]
-    );
-  }
+        return $this->render(
+            'tempaltes/try.html.twig',
+            [
+                'disabled' => $params['disabled'],
+                'title' => $params['title'],
+                'word' => $params['word'],
+                'content' => $params['content']
+            ]
+        );
+    }
 }

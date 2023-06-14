@@ -7,17 +7,20 @@ use App\Repository\ThemeRepository;
 class ThemeService
 {
     /**
-   * @var ThemeRepository
-   */
-  private $themeRepository;
+     * @var ThemeRepository
+     */
+    private $themeRepository;
 
-  public function __construct (ThemeRepository $themeRepository)
-  {
-     $this->themeRepository = $themeRepository;
-  }
+    public function __construct(ThemeRepository $themeRepository)
+    {
+        $this->themeRepository = $themeRepository;
+    }
 
-  public function getAll (): array
-  {
-    return $this->themeRepository->findAll();
-  }
+    /**
+     * @return array
+     */
+    public function getLastThemes(): array
+    {
+        return $this->themeRepository->findBy([], ['name' => 'ASC'], 10);
+    }
 }

@@ -7,6 +7,9 @@ use Twig\TwigFilter;
 
 class MorphExtension extends AbstractExtension
 {
+    /**
+     * @return array
+     */
     public function getFilters(): array
     {
         return [
@@ -14,7 +17,12 @@ class MorphExtension extends AbstractExtension
         ];
     }
 
-    public function keywordMorph($keyword, $morphCase)
+    /**
+     * @param array @keyword
+     * @param int @morphCase
+     * @return string
+     */
+    public function keywordMorph($keyword, $morphCase): string
     {
         return $keyword[$morphCase];
     }

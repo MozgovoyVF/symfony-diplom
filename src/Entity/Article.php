@@ -15,16 +15,16 @@ class Article
 
     #[ORM\Id]
     #[ORM\GeneratedValue]
-    #[ORM\Column]
+    #[ORM\Column(type:'integer', nullable: false)]
     private int $id;
 
-    #[ORM\Column(length: 100)]
+    #[ORM\Column(type: 'string', length: 100, nullable: false)]
     private string $title;
 
-    #[ORM\Column(length: 100)]
+    #[ORM\Column(type: 'string', length: 100, nullable: false)]
     private string $description;
 
-    #[ORM\Column(type: Types::TEXT)]
+    #[ORM\Column(type: Types::TEXT, length: 2000, nullable: false)]
     private string $content;
 
     #[ORM\ManyToOne(inversedBy: 'articles')]
@@ -32,16 +32,26 @@ class Article
     #[ORM\JoinColumn(nullable: false)]
     private User $author;
 
+    /**
+     * @return int
+     */
     public function getId(): int
     {
         return $this->id;
     }
 
+    /**
+     * @return string
+     */
     public function getTitle(): string
     {
         return $this->title;
     }
 
+    /**
+     * @param string $title
+     * @return self
+     */
     public function setTitle(string $title): self
     {
         $this->title = $title;
@@ -49,11 +59,18 @@ class Article
         return $this;
     }
 
+    /**
+     * @return string
+     */
     public function getDescription(): string
     {
         return $this->description;
     }
 
+    /**
+     * @param string $description
+     * @return self
+     */
     public function setDescription(string $description): self
     {
         $this->description = $description;
@@ -61,11 +78,18 @@ class Article
         return $this;
     }
 
+    /**
+     * @return string
+     */
     public function getContent(): string
     {
         return $this->content;
     }
 
+    /**
+     * @param string $content
+     * @return self
+     */
     public function setContent(string $content): self
     {
         $this->content = $content;
@@ -73,11 +97,18 @@ class Article
         return $this;
     }
 
+    /**
+     * @return User
+     */
     public function getAuthor(): User
     {
         return $this->author;
     }
 
+    /**
+     * @param User $author
+     * @return self
+     */
     public function setAuthor(User $author): self
     {
         $this->author = $author;

@@ -15,51 +15,50 @@ use Symfony\Component\HttpFoundation\Session\SessionInterface;
 #[IsGranted("IS_AUTHENTICATED_FULLY")]
 class ArticleController extends AbstractController
 {
-  /**
-   * Преобразует ввод, заданный в качестве первого аргумента.
-   *
-   * @param ArticleContentService $articleContentService
-   * @param Request $request
-   * @param SessionInterface $session
-   */
-  #[Route('/create_content', name: 'app_article_create_content', methods: ['POST'])]
-  public function createContent(ArticleContentService $articleContentService, Request $request, SessionInterface $session): RedirectResponse
-  {
-    $params = $articleContentService->createContent($request);
+    /**
+     * @param ArticleContentService $articleContentService
+     * @param Request $request
+     * @param SessionInterface $session
+     * @return RedirectResponse
+     */
+    #[Route('/create_content', name: 'app_article_create_content', methods: ['POST'])]
+    public function createContent(ArticleContentService $articleContentService, Request $request, SessionInterface $session): RedirectResponse
+    {
+        $params = $articleContentService->createContent($request->request->all());
 
-    $session->set('disabled', $params['disabled']);
-    $session->set('content', $params['content']);
-    $session->set('error', $params['error']);
+        $session->set('create_disabled', $params['disabled']);
+        $session->set('article_content', $params['content']);
+        $session->set('content_error', $params['error']);
 
-    return $this->redirectToRoute('app_article_create');
-  }
+        return $this->redirectToRoute('app_article_create');
+    }
 
-  /**
-   * Отображение страницы создания контента статьи.
-   * @param ThemeService $themeService
-   * @param SessionInterface $session
-   */
-  #[Route('/create', name: 'app_article_create')]
-  public function create(ThemeService $themeService, SessionInterface $session): Response
-  {
-    $themes = $themeService->getAll();
+    /**
+     * @param ThemeService $themeService
+     * @param SessionInterface $session
+     * @return Response
+     */
+    #[Route('/create', name: 'app_article_create')]
+    public function create(ThemeService $themeService, SessionInterface $session): Response
+    {
+        $themes = $themeService->getLastThemes();
 
-    $disabled = $session->get('disabled', false);
-    $content = $session->get('content', '');
-    $error = $session->get('error', '');
+        $disabled = $session->get('create_disabled', false);
+        $content = $session->get('article_content', '');
+        $error = $session->get('content_error', '');
 
-    $session->set('disabled', false);
-    $session->set('content', '');
-    $session->set('error', '');
+        $session->set('create_disabled', false);
+        $session->set('article_content', '');
+        $session->set('content_error', '');
 
-    return $this->render(
-      'templates/article/article_create.html.twig',
-      [
-        'disabled' => $disabled,
-        'content' => $content,
-        'error' => $error,
-        'themes' => $themes
-      ]
-    );
-  }
+        return $this->render(
+            'templates/article/article_create.html.twig',
+            [
+                'disabled' => $disabled,
+                'content' => $content,
+                'error' => $error,
+                'themes' => $themes
+            ]
+        );
+    }
 }

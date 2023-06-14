@@ -14,6 +14,7 @@ class UserRegistrationFormType extends AbstractType
     /** 
      * @param FormBuilderInterface $builder 
      * @param Array $builder 
+     * @return void
      */
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
@@ -28,6 +29,10 @@ class UserRegistrationFormType extends AbstractType
             ]);
     }
 
+    /**
+     * @param OptionsResolver $resolver
+     * @return void
+     */
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([

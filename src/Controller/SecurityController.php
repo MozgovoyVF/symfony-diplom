@@ -2,27 +2,24 @@
 
 namespace App\Controller;
 
-use App\Entity\User;
 use App\Form\UserRegistrationFormType;
-use App\Repository\UserRepository;
-use App\Service\Mailer;
+use App\Service\SecurityService;
 use App\Service\UserService;
-use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
-use SymfonyCasts\Bundle\VerifyEmail\VerifyEmailHelperInterface;
 use SymfonyCasts\Bundle\VerifyEmail\Exception\VerifyEmailExceptionInterface;
 
 class SecurityController extends AbstractController
 {
-    #[Route(path: '/login', name: 'app_login')]
     /**
      * @param AuthenticationUtils $authenticationUtils
      * @param Request $request
+     * @return Response
      */
+    #[Route(path: '/login', name: 'app_login')]
     public function login(AuthenticationUtils $authenticationUtils, Request $request): Response
     {
         if ($this->isGranted('IS_AUTHENTICATED_REMEMBERED')) {
@@ -36,20 +33,22 @@ class SecurityController extends AbstractController
         return $this->render('templates/security/login.html.twig', ['last_username' => $lastUsername, 'error' => $error, 'remember' => $remember]);
     }
 
+    /**
+     * @return void
+     */
     #[Route(path: '/logout', name: 'app_logout')]
     public function logout(): void
     {
         throw new \LogicException('This method can be blank - it will be intercepted by the logout key on your firewall.');
     }
 
-    #[Route(path: '/register', name: 'app_register')]
     /**
      * @param Request $request
-     * @param Mailer $mailer
-     * @param VerifyEmailHelperInterface $verifyEmailHelper
-     * @param UserService $userService
+     * @param SecurityService $securityService
+     * @return Response
      */
-    public function register(Request $request, Mailer $mailer, VerifyEmailHelperInterface $verifyEmailHelper, UserService $userService): Response
+    #[Route(path: '/register', name: 'app_register')]
+    public function register(Request $request, SecurityService $securityService): Response
     {
         if ($this->isGranted('IS_AUTHENTICATED_REMEMBERED')) {
             return $this->redirectToRoute('app_account');
@@ -61,37 +60,9 @@ class SecurityController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
 
-            /** @var UserRegistrationFormModel $userModel */
-            $userModel = $form->getData();
-
-            $user = new User();
-
-            $user
-                ->setEmail($userModel->email)
-                ->setFirstName($userModel->firstName)
-                ->setPassword($userService->passwordEncoder->hashPassword(
-                    $user,
-                    $userModel->plainPassword
-                ))
-                ->setSubscriptionDate(new \DateTime());;
-
-            $userService->em->persist($user);
-            $userService->em->flush();
-
-            $signatureComponents = $verifyEmailHelper->generateSignature(
-                'app_verify_email',
-                $user->getId(),
-                $user->getEmail(),
-                ['id' => $user->getId()]
-            );
-
-            $mailer->sendWelcomeMail($user, $signatureComponents);
+            $securityService->registerUser($form);
 
             $this->addFlash('success', 'Для завершения регистрации подтвердите Ваш адрес электронной почты');
-
-            return $this->render('templates/security/register.html.twig', [
-                'registrationForm' => $form->createView(),
-            ]);
         }
 
         return $this->render('templates/security/register.html.twig', [
@@ -99,38 +70,30 @@ class SecurityController extends AbstractController
         ]);
     }
 
-    #[Route(path: '/verify', name: 'app_verify_email')]
     /**
      * @param Request $request
-     * @param VerifyEmailHelperInterface $verifyEmailHelper
-     * @param UserRepository $userRepository
-     * @param EntityManagerInterface $entityManager
      * @param UserService $userService
+     * @param SecurityService $securityService
+     * @return Response
      */
+    #[Route(path: '/verify', name: 'app_verify_email')]
     public function verifyUserEmail(
         Request $request,
-        VerifyEmailHelperInterface $verifyEmailHelper,
-        UserRepository $userRepository,
-        EntityManagerInterface $entityManager,
-        UserService $userService
+        UserService $userService,
+        SecurityService $securityService
     ): Response {
-        $user = $userRepository->find($request->query->get('id'));
+        $user = $userService->findUser($request->query->get('id'));
         if (!$user) {
             throw $this->createNotFoundException();
         }
         try {
-            $verifyEmailHelper->validateEmailConfirmation(
-                $request->getUri(),
-                $user->getId(),
-                $user->getEmail(),
-            );
+            $securityService->verifyEmail($request->getUri(), $user->getId(), $user->getEmail());
         } catch (VerifyEmailExceptionInterface $e) {
             $this->addFlash('error', $e->getReason());
             return $this->redirectToRoute('app_register');
         }
 
         $user->setIsVerified(true);
-        $entityManager->flush();
         $this->addFlash('success', 'Аккаунт верифицирован!');
 
         $userService->authenticate($request, $user);

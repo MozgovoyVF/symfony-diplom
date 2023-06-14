@@ -58,11 +58,19 @@ class LoginFormAuthenticator extends AbstractAuthenticator
         $this->router = $router;
     }
 
+    /**
+     * @param Request $request
+     * @return bool
+     */
     public function supports(Request $request): ?bool
     {
         return $request->attributes->get('_route') === 'app_login' && $request->isMethod('POST');
     }
 
+    /**
+     * @param Request $request
+     * @return Passport
+     */
     public function authenticate(Request $request): Passport
     {
         $credentials = [
@@ -94,12 +102,23 @@ class LoginFormAuthenticator extends AbstractAuthenticator
         return new SelfValidatingPassport(new UserBadge($credentials['email']));
     }
 
+    /**
+     * @param Request $request
+     * @param TokenInterface $token
+     * @param string $firewallName
+     * @return Response
+     */
     public function onAuthenticationSuccess(Request $request, TokenInterface $token, string $firewallName): ?Response
     {
         $path = $this->getTargetPath($request->getSession(), $firewallName);
         return new RedirectResponse($path?: $this->urlGenerator->generate('app_homepage'));
     }
 
+    /**
+     * @param Request $request
+     * @param AuthenticationException $exception
+     * @return Response
+     */
     public function onAuthenticationFailure(Request $request, AuthenticationException $exception): ?Response
     {
         $request->getSession()->set(Security::AUTHENTICATION_ERROR, $exception);

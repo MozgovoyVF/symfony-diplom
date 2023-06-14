@@ -1,86 +1,135 @@
-<?php 
+<?php
 
 namespace App\Service;
 
+use App\Repository\ThemeRepository;
 use Exception;
+use Symfony\Component\DependencyInjection\ParameterBag\ContainerBagInterface;
 
-class ImageLoader 
+class ImageLoader
 {
-  private $fileSizeLimit = 2 * 1024 * 1024; // 5Mb
-  private $allowedTypes  = [
-    'image/jpeg',
-    'image/jpg',
-    'image/png',
-  ];
-  private $theme;
+    /**
+     * @var int
+     */
+    private $fileSizeLimit = 2 * 1024 * 1024; // 5Mb
 
-  public function __construct($theme)
-  {
-    $this->theme = $theme;
-  } 
+    /**
+     * @var array
+     */
+    private $allowedTypes  = [
+        'image/jpeg',
+        'image/jpg',
+        'image/png',
+    ];
 
-  public function load ($files): array
-  {
-    $uploaddir = $_SERVER['DOCUMENT_ROOT'] . '/build/images/themes/' . $this->theme . '/';
-    $images = $files['images'];
-    $imagePaths = [];
+    /**
+     * @var ContainerBagInterface
+     */
+    private $containerBag;
+    /**
+     * @var ThemeRepository
+     */
+    private $themeRepository;
 
-    if (count($images['name']) > 5) {
-      throw new Exception('Максимальное количество загружаемых файлов - 5');
+    public function __construct(ContainerBagInterface $containerBag, ThemeRepository $themeRepository)
+    {
+        $this->containerBag = $containerBag;
+        $this->themeRepository = $themeRepository;
     }
 
-    for ($i = 0; $i < count($images['name']); $i++) {
-      if ($images['error'][$i] !== 0) {
-        throw new Exception('При загрузке ' . $i + 1 .  ' файла произошла ошибка');
-      }
+    /**
+     * @param array $files
+     * @param string $themeCode
+     * @return array
+     */
+    public function load(array $files, string $themeCode): array
+    {
+        $themeEntity = $this->themeRepository->findOneBy(['code' => $themeCode]);
+        $uploaddir = sprintf($this->containerBag->get('IMAGE_PATH'), $themeEntity->getName());
+        $images = $files['images'];
+        $imagePaths = [];
 
-      $destName = $uploaddir . $images['name'][$i];
-      if (!$this->moveFile($images['tmp_name'][$i], $destName)) {
-        throw new Exception('При загрузке ' . $i + 1 .  ' файла произошла ошибка');
-      }
-  
-      if (!$this->validateFile($images['type'][$i], $images['size'][$i], $this->fileSizeLimit, $this->allowedTypes)) {
-        $this->removeFile($destName);
-        throw new Exception('При загрузке ' . $i + 1 .  ' файла произошла ошибка');
-      }
-      $imagePaths[] = 'build/images/themes/' . $this->theme . '/' . $images['name'][$i];
-    }  
+        if (count($images['name']) > 5) {
+            throw new Exception('Максимальное количество загружаемых файлов - 5');
+        }
 
-    return $imagePaths;
-  }
+        for ($i = 0; $i < count($images['name']); $i++) {
+            if ($images['error'][$i] !== 0) {
+                throw new Exception('При загрузке ' . $i + 1 .  ' файла произошла ошибка');
+            }
 
-  // Helper functions
-private function moveFile($from, $to): bool
-  {
-    return move_uploaded_file($from, $to);
-  }
+            $destName = $uploaddir . $images['name'][$i];
 
-private function removeFile($name): bool
-  {
-    return unlink($name);
-  }
+            if (!$this->moveFile($images['tmp_name'][$i], $destName)) {
+                throw new Exception('При загрузке ' . $i + 1 .  ' файла произошла ошибка');
+            }
 
-private function validateFile($type, $fileSize, $size, $typeList): bool
-  {
-    if (!$this->validateFileSize($fileSize, $size)) {
-      return false;
+            if (!$this->validateFile($images['type'][$i], $images['size'][$i], $this->fileSizeLimit, $this->allowedTypes)) {
+                $this->removeFile($destName);
+                throw new Exception('При загрузке ' . $i + 1 .  ' файла произошла ошибка');
+            }
+            $imagePaths[] = 'build/images/themes/' . $themeEntity->getName() . '/' . $images['name'][$i];
+        }
+
+        return $imagePaths;
     }
 
-    return $this->validateFileType($type, $typeList);
-  }
+    /**
+     * @param string $from
+     * @param string $to
+     * @return bool
+     */
+    private function moveFile($from, $to): bool
+    {
+        return move_uploaded_file($from, $to);
+    }
 
-private function validateFileSize($fileSize, $maxSizeLimit): bool
-  {
-      return $fileSize <= $maxSizeLimit;
-  }
+    /**
+     * @param string $name
+     * @return bool
+     */
+    private function removeFile($name): bool
+    {
+        return unlink($name);
+    }
 
-private function validateFileType($type, $types): bool
-  {
-    return in_array(
-      $type,
-      $types,
-      true
-    );
-  }
+    /**
+     * @param string $type
+     * @param int $filesize
+     * @param int $size
+     * @param array $typeList
+     * @return bool
+     */
+    private function validateFile($type, $fileSize, $size, $typeList): bool
+    {
+        if (!$this->validateFileSize($fileSize, $size)) {
+            return false;
+        }
 
+        return $this->validateFileType($type, $typeList);
+    }
+
+    /**
+     * @param int $filesize
+     * @param int $maxSizeLimit
+     * @return bool
+     */
+    private function validateFileSize($fileSize, $maxSizeLimit): bool
+    {
+        return $fileSize <= $maxSizeLimit;
+    }
+
+    /**
+     * @param string $type
+     * @param array $types
+     * @return bool
+     */
+    private function validateFileType($type, $types): bool
+    {
+        return in_array(
+            $type,
+            $types,
+            true
+        );
+    }
 }
