@@ -8,6 +8,8 @@ parameters:
     PLUS: 2
     PRO: 3
     IMAGE_PATH: '%env(SERVER_PUBLIC_PATH)%/%env(IMAGE_PATH)%'
+    WORD: 123145125125
+    PHP: 123125125125
 
 services:
     # default configuration for services in *this* file

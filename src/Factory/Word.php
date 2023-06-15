@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Service\Themes;
+namespace App\Factory;
 
 use App\Interface\ThemesInterface;
 

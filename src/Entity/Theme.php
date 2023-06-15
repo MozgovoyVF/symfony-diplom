@@ -19,7 +19,7 @@ class Theme
     #[ORM\Column(type: 'string', length: 255, nullable: false)]
     private string $description;
 
-    #[ORM\Column(type: 'string', length: 255, nullable: false)]
+    #[ORM\Column(type: 'integer', length: 255, nullable: false)]
     private string $code;
 
     /**

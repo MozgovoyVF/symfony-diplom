@@ -3,27 +3,29 @@
 namespace App\Factory;
 
 use App\Interface\ThemesInterface;
-use App\Repository\ThemeRepository;
+use Symfony\Component\DependencyInjection\ParameterBag\ContainerBagInterface;
 
 class ThemeFactory
 {
-    /** @var ThemeRepository */
-    private $themeRepository;
+    /** @var ContainerBagInterface */
+    private $containerBag;
 
-    public function __construct(ThemeRepository $themeRepository)
+    public function __construct(ContainerBagInterface $containerBag)
     {
-        $this->themeRepository = $themeRepository;
+        $this->containerBag = $containerBag;
     }
 
     /**
-     * @param ThemesInterface $themesInterface
-     * @return void
+     * @param string $themeCode
+     * @return ThemesInterface
      */
-    public function createThemeInterface(string $themeCode)
+    public function createThemeInterface(string $themeCode): ThemesInterface
     {
-        $themeEntity = $this->themeRepository->findOneBy(['code' => $themeCode]);
-
-        return  new ('\\App\\Service\\Themes\\' . ucfirst($themeEntity->getName()))();
-
+        switch ($themeCode) {
+            case $this->containerBag->get('PHP'):
+                return new Php();
+            case $this->containerBag->get('WORD'):
+                return new Word();
+        }
     }
 }
