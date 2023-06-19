@@ -4,7 +4,6 @@ namespace App\Form\Model;
 
 use App\Validator\UniqueUser;
 use Symfony\Component\Validator\Constraints\Email;
-use Symfony\Component\Validator\Constraints\IsTrue;
 use Symfony\Component\Validator\Constraints\Length;
 use Symfony\Component\Validator\Constraints\NotBlank;
 

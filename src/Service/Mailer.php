@@ -13,17 +13,22 @@ class Mailer
     /**
      * @var MailerInterface
      */
-    private $mailer;
+    private MailerInterface $mailer;
 
     public function __construct(MailerInterface $mailer)
     {
         $this->mailer = $mailer;
     }
 
-    public function sendWelcomeMail(User $user, $signatureComponents)
+    /**
+     * @param User $user
+     * @param mixed $signatureComponents
+     * @return void
+     */
+    public function sendWelcomeMail(User $user, mixed $signatureComponents): void
     {
         $this->send(
-            'email/welcome.html.twig',
+            'templates/email/welcome.html.twig',
             'Добро пожаловать на BlaBlaArticle',
             $user,
             function (TemplatedEmail $email) use ($signatureComponents) {
@@ -35,7 +40,12 @@ class Mailer
         );
     }
 
-    public function sendWeeklyNewsletter(User $user, array $articles)
+    /**
+     * @param User $user
+     * @param array $articles
+     * @return void
+     */
+    public function sendWeeklyNewsletter(User $user, array $articles): void
     {
         $this->send(
             'email/newsletter.html.twig',
@@ -50,7 +60,14 @@ class Mailer
         );
     }
 
-    private function send(string $template, string $subject, User $user, Closure $callback = null)
+    /**
+     * @param string $template
+     * @param string $subject
+     * @param User $user
+     * @param Closure $callback
+     * @return void
+     */
+    private function send(string $template, string $subject, User $user, Closure $callback = null): void
     {
         $email = (new TemplatedEmail())
             ->from(new Address('blablaarticle@symfony.ru', 'BlaBlaArticle'))
