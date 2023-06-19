@@ -8,7 +8,7 @@ use Symfony\Component\DependencyInjection\ParameterBag\ContainerBagInterface;
 class ThemeFactory
 {
     /** @var ContainerBagInterface */
-    private $containerBag;
+    private ContainerBagInterface $containerBag;
 
     public function __construct(ContainerBagInterface $containerBag)
     {

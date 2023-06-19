@@ -16,27 +16,27 @@ class UserService
     /**
      * @var UserPasswordHasherInterface
      */
-    public $passwordEncoder;
+    public UserPasswordHasherInterface $passwordEncoder;
     /**
      * @var UserAuthenticatorInterface
      */
-    public $authenticator;
+    public UserAuthenticatorInterface $authenticator;
     /**
      * @var LoginFormAuthenticator
      */
-    public $formAuthenticator;
+    public LoginFormAuthenticator $formAuthenticator;
     /**
      * @var EntityManagerInterface
      */
-    public $em;
+    public EntityManagerInterface $em;
     /**
      * @var User
      */
-    public $user;
+    public User $user;
     /**
      * @var UserRepository
      */
-    public $userRepository;
+    public UserRepository $userRepository;
 
     /**
      * @param UserPasswordHasherInterface $passwordEncoder
@@ -62,7 +62,7 @@ class UserService
      * @param array $data
      * @return User
      */
-    public function create($data): User
+    public function create(array $data): User
     {
         $this->user = new User();
         $this->user
@@ -81,7 +81,7 @@ class UserService
      * @param User $user
      * @return Response
      */
-    public function authenticate(Request $request, $user = null): Response
+    public function authenticate(Request $request, User $user = null): Response
     {
         $user = $user ? $user : $this->user;
 
@@ -95,10 +95,10 @@ class UserService
     }
 
     /**
-     * @param int $id
+     * @param mixed $id
      * @return User|null
      */
-    public function findUser($id): User
+    public function findUser(mixed $id): User
     {
         return $this->userRepository->find($id);
     }

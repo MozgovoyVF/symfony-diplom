@@ -13,7 +13,7 @@ class UserRegistrationFormType extends AbstractType
 {
     /** 
      * @param FormBuilderInterface $builder 
-     * @param Array $builder 
+     * @param array $options 
      * @return void
      */
     public function buildForm(FormBuilderInterface $builder, array $options): void

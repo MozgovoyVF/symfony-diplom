@@ -3,7 +3,6 @@
 namespace App\Provider;
 
 use App\Factory\ThemeFactory;
-use App\Interface\ThemesInterface;
 use App\Service\ImageLoader;
 use Exception;
 use Twig\Environment;
@@ -13,15 +12,15 @@ class ArticleContentProvider
     /**
      * @var Environment
      */
-    private $templating;
+    private Environment $templating;
     /**
      * @var ThemeFactory
      */
-    private $themeFactory;
+    private ThemeFactory $themeFactory;
     /**
      * @var ImageLoader
      */
-    private $imageLoader;
+    private ImageLoader $imageLoader;
 
     public function __construct(Environment $templating, ThemeFactory $themeFactory, ImageLoader $imageLoader)
     {
@@ -35,7 +34,7 @@ class ArticleContentProvider
      * @param array $files
      * @return array
      */
-    public function get($data, $files): array
+    public function get(array $data, array $files): array
     {
         /** @var ThemeInterface $theme */
         $theme = $this->themeFactory->createThemeInterface($data['theme']);
@@ -48,15 +47,15 @@ class ArticleContentProvider
                 throw new Exception($e->getMessage());
             }
         } else {
-            $images = $theme->getImages();
+            $images = $theme->images;
         }
 
-        $title = ($data['title'] == '') ? $theme->getTitle() : $data['title'];
+        $title = ($data['title'] == '') ? $theme->title : $data['title'];
 
         //При отсутствии ключевого слова - выбираем его из указанной темы
         if (count($data['keywords']) === 0) {
-            $randKey = array_rand($theme->getKeywords(), 1);
-            $keywords = $theme->getKeywords()[$randKey];
+            $randKey = array_rand($theme->keywords, 1);
+            $keywords = $theme->keywords[$randKey];
         }
 
         $words = [];
@@ -89,11 +88,11 @@ class ArticleContentProvider
         $count = ($count == 0) ? 1 : $count;
 
         //Создаем контент
-        $content = implode(PHP_EOL . PHP_EOL, $this->createContent($title, $theme->getParagraphs(), $keywords, $count, $images, $words, $wordsCount));
+        $content = implode(PHP_EOL . PHP_EOL, $this->createContent($title, $theme->paragraphs, $keywords, $count, $images, $words, $wordsCount));
 
         return [
             'title' => $title,
-            'description' => mb_substr($theme->getDescription(), 0, 30) . '...',
+            'description' => mb_substr($theme->description, 0, 30) . '...',
             'content' => $content
         ];
     }
@@ -108,7 +107,7 @@ class ArticleContentProvider
      * @param array $wordsCount
      * @return array
      */
-    private function createContent($title, $paragraphs, $keywords, $count, $images, $words, $wordsCount): array
+    private function createContent(string $title, array $paragraphs, array $keywords, int $count, array $images, array $words, array $wordsCount): array
     {
         $modules = scandir($_SERVER['DOCUMENT_ROOT'] . '/build/modules/');
         $addWords = array_fill(0, count($words), []);
@@ -169,7 +168,7 @@ class ArticleContentProvider
      * @param array $wordsCountInModule
      * @return string
      */
-    private function createParagraph($paragraphs, $keywords, $wordsInModule, $wordsCountInModule): string
+    private function createParagraph(array $paragraphs, array $keywords, array $wordsInModule, array $wordsCountInModule): string
     {
         $text = $this->templating->render($paragraphs[array_rand($paragraphs, 1)], [
             'keywords' => $keywords,
@@ -189,7 +188,7 @@ class ArticleContentProvider
      * @param array $wordsCountInModule
      * @return string
      */
-    private function createParagraphs($paragraphs, $keywords, $wordsInModule, $wordsCountInModule): string
+    private function createParagraphs(array $paragraphs, array $keywords, array $wordsInModule, array $wordsCountInModule): string
     {
         $count = rand(1, 3);
         $result = [];
@@ -233,7 +232,7 @@ class ArticleContentProvider
      * @param string $title
      * @return string
      */
-    private function createTitle($title): string
+    private function createTitle(string $title): string
     {
         return $this->templating->render('/public/build/modules/title/title.html.twig', [
             'title' => $title,
@@ -247,7 +246,7 @@ class ArticleContentProvider
      * @param array $keywords
      * @return array
      */
-    private function insertKeywords($arr, $wordsCountInModule, $wordsInModule,  $keywords): array
+    private function insertKeywords(array $arr, array $wordsCountInModule, array $wordsInModule,  array $keywords): array
     {
         for ($j = 0; $j < count($wordsCountInModule); $j++) {
 

@@ -13,6 +13,7 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 class AccountController extends AbstractController
 {
     /**
+     * @param ArticleService $articleService
      * @return Response
      */
     #[Route('/account', name: 'app_account')]

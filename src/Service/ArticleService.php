@@ -9,7 +9,7 @@ class ArticleService
     /**
      * @var ArticleRepository
      */
-    private $articleRepository;
+    private ArticleRepository $articleRepository;
     public function __construct(ArticleRepository $articleRepository)
     {
         $this->articleRepository = $articleRepository;
@@ -18,7 +18,7 @@ class ArticleService
      * @param int $id
      * @return array
      */
-    public function getLatestMonthPublished($id): array
+    public function getLatestMonthPublished(int $id): array
     {
         return $this->articleRepository->findLatestMonthPublished($id);
     }

@@ -12,17 +12,17 @@ class SecurityService
     /**
      * @var Mailer
      */
-    private $mailer;
+    private Mailer $mailer;
 
     /**
      * @var VerifyEmailHelperInterface
      */
-    private $verifyEmailHelper;
+    private VerifyEmailHelperInterface $verifyEmailHelper;
 
     /**
      * @var UserService
      */
-    private $userService;
+    private UserService $userService;
 
     public function __construct(
         Mailer $mailer,
@@ -75,7 +75,7 @@ class SecurityService
    * @param string $email
    * @return void
    */
-    public function verifyEmail($uri, $id, $email): mixed
+    public function verifyEmail(string $uri, string $id, string $email): mixed
     {
         return $this->verifyEmailHelper->validateEmailConfirmation($uri, $id, $email);
     }

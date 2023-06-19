@@ -18,7 +18,10 @@ use Symfony\Component\Validator\Constraints\Regex;
 
 class ArticleFormType extends AbstractType
 {
-    private $userRepository;
+    /**
+     * @var UserRepository
+     */
+    private UserRepository $userRepository;
 
     /** 
      * @param UserRepository $userRepository 
@@ -30,7 +33,7 @@ class ArticleFormType extends AbstractType
 
     /** 
      * @param FormBuilderInterface $builder 
-     * @param Array $builder 
+     * @param array $options 
      * @return void
      */
     public function buildForm(FormBuilderInterface $builder, array $options): void

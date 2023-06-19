@@ -28,21 +28,23 @@ class LoginFormAuthenticator extends AbstractAuthenticator
     /**
      * @var UserRepository
      */
-    private $userRepository;
+    private UserRepository $userRepository;
     /**
      * @var UrlGeneratorInterface
      */
-    private $urlGenerator;
+    private UrlGeneratorInterface $urlGenerator;
     /**
      * @var CsrfTokenManagerInterface
      */
-    private $csrfTokenManager;
+    private CsrfTokenManagerInterface $csrfTokenManager;
     /**
-     * @var UserPasswordEncoderInterface
+     * @var UserPasswordHasherInterface
      */
-    private $passwordEncoder;
-
-    private $router;
+    private UserPasswordHasherInterface $passwordEncoder;
+    /**
+     * @var RouterInterface
+     */
+    private RouterInterface $router;
 
     public function __construct(
         UserRepository $userRepository,

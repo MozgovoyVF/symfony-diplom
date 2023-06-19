@@ -11,12 +11,12 @@ class ImageLoader
     /**
      * @var int
      */
-    private $fileSizeLimit = 2 * 1024 * 1024; // 5Mb
+    private int $fileSizeLimit = 2 * 1024 * 1024; // 2Mb
 
     /**
      * @var array
      */
-    private $allowedTypes  = [
+    private array $allowedTypes  = [
         'image/jpeg',
         'image/jpg',
         'image/png',
@@ -25,11 +25,11 @@ class ImageLoader
     /**
      * @var ContainerBagInterface
      */
-    private $containerBag;
+    private ContainerBagInterface $containerBag;
     /**
      * @var ThemeRepository
      */
-    private $themeRepository;
+    private ThemeRepository $themeRepository;
 
     public function __construct(ContainerBagInterface $containerBag, ThemeRepository $themeRepository)
     {
@@ -79,7 +79,7 @@ class ImageLoader
      * @param string $to
      * @return bool
      */
-    private function moveFile($from, $to): bool
+    private function moveFile(string $from, string $to): bool
     {
         return move_uploaded_file($from, $to);
     }
@@ -88,7 +88,7 @@ class ImageLoader
      * @param string $name
      * @return bool
      */
-    private function removeFile($name): bool
+    private function removeFile(string $name): bool
     {
         return unlink($name);
     }
@@ -100,7 +100,7 @@ class ImageLoader
      * @param array $typeList
      * @return bool
      */
-    private function validateFile($type, $fileSize, $size, $typeList): bool
+    private function validateFile(string $type, int $fileSize, int $size, array $typeList): bool
     {
         if (!$this->validateFileSize($fileSize, $size)) {
             return false;
@@ -114,7 +114,7 @@ class ImageLoader
      * @param int $maxSizeLimit
      * @return bool
      */
-    private function validateFileSize($fileSize, $maxSizeLimit): bool
+    private function validateFileSize(int $fileSize, int $maxSizeLimit): bool
     {
         return $fileSize <= $maxSizeLimit;
     }
@@ -124,7 +124,7 @@ class ImageLoader
      * @param array $types
      * @return bool
      */
-    private function validateFileType($type, $types): bool
+    private function validateFileType(string $type, array $types): bool
     {
         return in_array(
             $type,

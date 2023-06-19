@@ -13,7 +13,7 @@ class Mailer
     /**
      * @var MailerInterface
      */
-    private $mailer;
+    private MailerInterface $mailer;
 
     public function __construct(MailerInterface $mailer)
     {
@@ -25,7 +25,7 @@ class Mailer
      * @param mixed $signatureComponents
      * @return void
      */
-    public function sendWelcomeMail(User $user, $signatureComponents): void
+    public function sendWelcomeMail(User $user, mixed $signatureComponents): void
     {
         $this->send(
             'templates/email/welcome.html.twig',

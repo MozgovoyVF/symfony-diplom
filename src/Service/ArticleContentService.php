@@ -16,30 +16,30 @@ class ArticleContentService
     /**
      * @var ArticleRepository
      */
-    private $articleRepository;
+    private ArticleRepository $articleRepository;
     /**
      * @var ArticleContentProvider
      */
-    private $articleContentProvider;
+    private ArticleContentProvider $articleContentProvider;
     /**
      * @var EntityManagerInterface
      */
-    private $em;
+    private EntityManagerInterface $em;
     /**
      * @var Security
      */
-    private $security;
+    private Security $security;
     /**
      * @var ArticleContentTryProvider
      */
-    private $articleProvider;
+    private ArticleContentTryProvider $articleProvider;
     /**
      * @var ContainerBagInterface
      */
-    private $containerBag;
-    
-    private $error = '';
-    private $content = '';
+    private ContainerBagInterface $containerBag;
+
+    private string $error = '';
+    private string $content = '';
 
     public function __construct(
         ArticleRepository $articleRepository,
@@ -61,7 +61,7 @@ class ArticleContentService
      * @param array $data
      * @return array
      */
-    public function createContent($data): array
+    public function createContent(array $data): array
     {
         /** @var User $user */
         $user = $this->security->getUser();
@@ -91,19 +91,18 @@ class ArticleContentService
             }
         }
 
-        return
-            [
-                'disabled' => $disabled,
-                'content' => $this->content,
-                'error' => $this->error,
-            ];
+        return [
+            'disabled' => $disabled,
+            'content' => $this->content,
+            'error' => $this->error,
+        ];
     }
 
     /**
      * @param array $data
      * @return array
      */
-    public function createTrialContent($data): array
+    public function createTrialContent(array $data): array
     {
         $disabled = false;
         $title = '';
@@ -123,7 +122,7 @@ class ArticleContentService
     EOF;
 
         $session = $this->containerBag->get('session');
-    
+
         if ($session->get('user_title') && $session->get('user_word')) {
             $disabled = true;
             $title = $session->get('user_title');

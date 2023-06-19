@@ -22,7 +22,7 @@ class MorphExtension extends AbstractExtension
      * @param int @morphCase
      * @return string
      */
-    public function keywordMorph($keyword, $morphCase): string
+    public function keywordMorph(array $keyword, int $morphCase): string
     {
         return $keyword[$morphCase];
     }

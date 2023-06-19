@@ -9,7 +9,7 @@ class ThemeService
     /**
      * @var ThemeRepository
      */
-    private $themeRepository;
+    private ThemeRepository $themeRepository;
 
     public function __construct(ThemeRepository $themeRepository)
     {
